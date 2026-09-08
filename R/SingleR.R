@@ -135,7 +135,7 @@ SingleR <- function(
         restrict = restrict, 
         test.genes=rownames(test),
         assay.type=assay.type.ref,
-	check.missing=check.missing.ref, 
+        check.missing=check.missing.ref,
         hint.sce=hint.sce,
         BNPARAM=BNPARAM, 
         num.threads = num.threads, 
