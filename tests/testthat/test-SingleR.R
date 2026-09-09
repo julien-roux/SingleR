@@ -7,17 +7,6 @@ test_that("SingleR works in DE mode", {
     expect_true(sum(diag(tab))/sum(tab) > 0.95)
 })
 
-test_that("SingleR works if assay in reference or test dataset are not called \"logcounts\"", {
-    test.renamed <- test
-    training.renamed <- training
-    names(assay(test.renamed))[names(assay(test.renamed)) == "logcounts"] <- "normalized"
-    names(assay(training.renamed))[names(assay(training.renamed)) == "logcounts"] <- "normalized"
-
-    out <- SingleR(test=test.renamed, ref=training.renamed, labels=training$label, assay.type.test = "normalized", assay.type.ref = "normalized")
-    ref <- SingleR(test=test, ref=training, labels=training$label)
-    expect_identical(out, ref)
-})
-
 test_that("SingleR works with custom gene selection", {
     all.labs <- sort(unique(training$label))
     collected <- rep(list(tail(rownames(training), 100)), length(all.labs))
@@ -122,4 +111,15 @@ test_that("SingleR handles NAs in the labels", {
     ref2 <- SingleR(test=test, ref=training[,!populate], labels=training$label[!populate])
 
     expect_identical(ref1, ref2)
+})
+
+test_that("SingleR respects non-default assay names", {
+    test.renamed <- test
+    training.renamed <- training
+    assayNames(test.renamed)[assayNames(test.renamed) == "logcounts"] <- "normalized"
+    assayNames(training.renamed)[assayNames(training.renamed) == "logcounts"] <- "normalized"
+
+    out <- SingleR(test=test.renamed, ref=training.renamed, labels=training$label, assay.type.test="normalized", assay.type.ref="normalized")
+    ref <- SingleR(test=test, ref=training, labels=training$label)
+    expect_identical(out, ref)
 })
